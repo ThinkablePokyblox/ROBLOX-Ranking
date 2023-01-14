@@ -3,8 +3,11 @@ from flask import Flask, request
 from roblox import Client, RobloxException
 import asyncio
 from requests import post
+from dotenv import load_dotenv
+from os import getenv
 # Variables
-client = Client("")
+load_dotenv()
+client = Client(getenv("ROBLOXTOKEN"))
 # Functions
 async def ShoutFunc(GroupID: int, Message: str):
     print(GroupID, Message)
@@ -13,10 +16,10 @@ async def ShoutFunc(GroupID: int, Message: str):
         print("ID:", user.id)
         print("Name:", user.name)
         await client.get_base_group(GroupID).update_shout(Message)
-        post("", data=[("content", f"```fix\nShouting  '{str(Message)}'```")])
+        post(getenv("DISCORDWEBHOOK"), data=[("content", f"```fix\nShouting  '{str(Message)}'```")])
         return "Shouting.."
     except RobloxException as exception:
-        post("", data=[("content", "<@&955859397005938758> Something went wrong with the ranking bot! ```diff\n-" + str(exception) + "```")])
+        post(getenv("DISCORDWEBHOOK"), data=[("content", "<@&955859397005938758> Something went wrong with the ranking bot! ```diff\n-" + str(exception) + "```")])
         return "Something went wrong while shouting..." + str(exception)
 async def RankFunc(GroupID: int, UserID: int, RankID: int):
     print(GroupID, UserID, RankID)
@@ -26,10 +29,10 @@ async def RankFunc(GroupID: int, UserID: int, RankID: int):
         print("Name:", user.name)
         await client.get_base_group(GroupID).set_rank(UserID, RankID)
         user = await client.get_user(UserID)
-        post("", data=[("content", f"```fix\nRanking  {str(user.name)} to {str(RankID)}```")])
+        post(getenv("DISCORDWEBHOOK"), data=[("content", f"```fix\nRanking  {str(user.name)} to {str(RankID)}```")])
         return "Ranking.."
     except RobloxException as exception:
-        post("", data=[("content", "<@&955859397005938758> Something went wrong with the ranking bot! ```diff\n-" + str(exception) + "```")])
+        post(getenv("DISCORDWEBHOOK"), data=[("content", "<@&955859397005938758> Something went wrong with the ranking bot! ```diff\n-" + str(exception) + "```")])
         return "Something went wrong while ranking..." + str(exception)
 # Server
 app = Flask(__name__)
